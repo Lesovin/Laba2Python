@@ -44,6 +44,13 @@ class Validator:
     __political_views: str
     __worldview: str
     __address: str
+    __university_invalid = ['Каражан', 'Шармбатон', 'Бан Ард', 'Дурмстранг', 'Гвейсон Хайль', 'Кирин-Тор', 'Хогвартс',
+                            'Аретуза', ]
+    __worldview_invalid = ['Культ пророка Лебеды', 'Культ богини Мелитэле', 'Культ Механикус',
+                           'Светское гачимученничество', 'Храм Трибунала', 'Девять божеств', 'Культ проклятых']
+    __political_views_invalid = ['поддерживает Имперский легион',
+                                 'согласен с действиями Гарроша Адского Крика на посту вождя Орды',
+                                 'поддерживает Братьев Бури', 'патриот независимой Темерии', ]
 
     def __init__(self, email: str, weight: int, inn: str, passport_series: str, university: str, age: int,
                  political_views: str, worldview: str,
@@ -68,9 +75,9 @@ class Validator:
         :return: bool
         Булевый результат проверки на корректность
         """
-        if re.match(r"\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6}", self.__email) is None:
-            return False
-        return True
+        if re.match(r"\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6}", self.__email) is not None:
+            return True
+        return False
 
     def check_weight(self) -> bool:
         if re.match(r"\b\d{2,3}\b", str(self.__weight)) is not None and (self.__weight > 30) and (self.__weight < 250):
@@ -92,11 +99,30 @@ class Validator:
             return True
         return False
 
+    def check_worldview(self) -> bool:
+        if self.__worldview not in self.__worldview_invalid and re.match(r"^[\D]+$", self.__worldview) is not None:
+            return True
+        return False
+
+    def check_political_views(self) -> bool:
+        if self.__political_views not in self.__political_views_invalid and re.match(r"^[\D]+$",
+                                                                                     self.__worldview) is not None:
+            return True
+        return False
+
+    def check_address(self) -> bool:
+        if re.match(r"(ул\.\s[\w .-]+\d+)", self.__address) is not None and re.match(r"^Аллея\s[\w .-]+\d+$",
+                                                                                     self.__address) is None:
+            return True
+        return False
+
+
 parser = argparse.ArgumentParser(description='main')
 parser.add_argument('-input', dest="file_input", default='69.txt', type=str)
 parser.add_argument('-output', dest="file_output", default='69_output.txt', type=str)
 args = parser.parse_args()
 file = ReadFromFile(args.file_input)
 output = open(args.file_output, 'w')
-
+for elem in file.data:
+    output.write(elem['address'] + '\n')
 output.close()
