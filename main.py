@@ -123,6 +123,5 @@ parser.add_argument('-output', dest="file_output", default='69_output.txt', type
 args = parser.parse_args()
 file = ReadFromFile(args.file_input)
 output = open(args.file_output, 'w')
-for elem in file.data:
-    output.write(elem['address'] + '\n')
+
 output.close()
