@@ -116,6 +116,26 @@ class Validator:
             return True
         return False
 
+    def check_all(self) -> str:
+        if not self.check_email():
+            return 'email'
+        elif not self.check_weight():
+            return 'weight'
+        elif not self.check_age():
+            return 'age'
+        elif not self.check_inn():
+            return 'inn'
+        elif not self.check_passport_series():
+            return 'passport_series'
+        elif not self.check_worldview():
+            return 'worldview'
+        elif not self.check_political_views():
+            return 'political_views'
+        elif not self.check_address():
+            return 'address'
+        else:
+            return 'ok'
+
 
 parser = argparse.ArgumentParser(description='main')
 parser.add_argument('-input', dest="file_input", default='69.txt', type=str)
