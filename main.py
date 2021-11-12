@@ -80,44 +80,108 @@ class Validator:
         return False
 
     def check_weight(self) -> bool:
+        """
+        Выполняет проверку корректности записи веса.
+
+        Если записано не двух- или трехзначное число, число не >30 или не <250, то возвращает False.
+        Иначе True.
+        :return: bool
+        Булевый результат проверки на корректность
+        """
         if re.match(r"\d{2,3}\b", str(self.__weight)) is not None and (int(self.__weight) > 30) and (
                 int(self.__weight) < 250):
             return True
         return False
 
     def check_inn(self) -> bool:
+        """
+        Выполняет проверку корректности записи номера СНИЛСа.
+
+        Если записано не число, и количество чисел не равно 12, то возвращает False.
+        Иначе True.
+        :return: bool
+        Булевый результат проверки на корректность
+        """
         if len(self.__inn) == 12 and re.match(r"\d+", self.__inn) is not None:
             return True
         return False
 
     def check_passport_series(self) -> bool:
+        """
+        Выполняет проверку корректности записи серии паспорта.
+
+        Если записано не 5 знаков, или не записано два числа через пробел, то возвращает False.
+        Иначе True.
+        :return: bool
+        Булевый результат проверки на корректность
+        """
         if len(self.__passport_series) == 5 and re.match(r"\d{2}\s\d{2}", self.__passport_series) is not None:
             return True
         return False
 
     def check_university(self) -> bool:
+        """
+        Выполняет проверку корректности записи названия университета.
+
+        Если записаны не буквы и университет входит в список несуществующих, то возвращает False.
+        Иначе True.
+        :return: bool
+        Булевый результат проверки на корректность
+        """
         if re.match(r"^[\D]+$", self.__university) is not None and self.__university not in self.__university_invalid:
             return True
         return False
 
     def check_age(self) -> bool:
+        """
+        Выполняет проверку корректности записи возраста.
+
+        Если записано не двух- или трехзначное число, число не >18 или не <122, то возвращает False.
+        Иначе True.
+        :return: bool
+        Булевый результат проверки на корректность
+        """
         if re.match(r"\d{2,3}\b", str(self.__age)) is not None and (int(self.__age) > 18) and (
                 int(self.__age) < 122):
             return True
         return False
 
     def check_political_views(self) -> bool:
+        """
+        Выполняет проверку корректности записи политических взглядов.
+
+        Если записаны не буквы или такие политические взгляды не существуют, то возвращает False.
+        Иначе True.
+        :return: bool
+        Булевый результат проверки на корректность
+        """
         if self.__political_views not in self.__political_views_invalid and re.match(r"^[\D]+$",
                                                                                      self.__worldview) is not None:
             return True
         return False
 
     def check_worldview(self) -> bool:
+        """
+        Выполняет проверку корректности записи мировоззрения.
+
+        Если записаны не буквы, или такое мировоззрение не существует, то возвращает False.
+        Иначе True.
+        :return: bool
+        Булевый результат проверки на корректность
+        """
         if self.__worldview not in self.__worldview_invalid and re.match(r"^[\D]+$", self.__worldview) is not None:
             return True
         return False
 
     def check_address(self) -> bool:
+        """
+        Выполняет проверку корректности веса.
+
+        Если название улицы не начинается с ул. или начинается с Алллея, то возвращает False.
+        Иначе True.
+        :return: bool
+        Булевый результат проверки на корректность
+        """
         if re.match(r"(ул\.\s[\w .-]+\d+)", self.__address) is not None and re.match(r"^Аллея\s[\w .-]+\d+$",
                                                                                      self.__address) is None:
             return True
@@ -172,7 +236,7 @@ with tqdm(file.data, desc='Прогресс валидации', colour="#FFFFFF
         progressbar.update(1)
 number_of_invalid_records = errors[0] + errors[1] + errors[2] + errors[3] + errors[4] + errors[5] + errors[6] + errors[
     7] + errors[8]
-print("Общее число корректных записей:", number_of_valid_records,)
+print("Общее число корректных записей:", number_of_valid_records, )
 print("Общее число некорректных записей:", number_of_invalid_records)
 print("Ошибки в email:", errors[0])
 print("Ошибки в weight:", errors[0])
@@ -183,5 +247,4 @@ print("Ошибки в age:", errors[0])
 print("Ошибки в political_views:", errors[0])
 print("Ошибки в worldview:", errors[0])
 print("Ошибки в address:", errors[0])
-
 output.close()
