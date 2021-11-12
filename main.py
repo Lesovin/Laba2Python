@@ -85,12 +85,6 @@ class Validator:
             return True
         return False
 
-    def check_age(self) -> bool:
-        if re.match(r"\d{2,3}\b", str(self.__age)) is not None and (int(self.__age) > 18) and (
-                int(self.__age) < 122):
-            return True
-        return False
-
     def check_inn(self) -> bool:
         if len(self.__inn) == 12 and re.match(r"\d+", self.__inn) is not None:
             return True
@@ -101,14 +95,25 @@ class Validator:
             return True
         return False
 
-    def check_worldview(self) -> bool:
-        if self.__worldview not in self.__worldview_invalid and re.match(r"^[\D]+$", self.__worldview) is not None:
+    def check_university(self) -> bool:
+        if re.match(r"^[\D]+$", self.__university) is not None and self.__university not in self.__university_invalid:
+            return True
+        return False
+
+    def check_age(self) -> bool:
+        if re.match(r"\d{2,3}\b", str(self.__age)) is not None and (int(self.__age) > 18) and (
+                int(self.__age) < 122):
             return True
         return False
 
     def check_political_views(self) -> bool:
         if self.__political_views not in self.__political_views_invalid and re.match(r"^[\D]+$",
                                                                                      self.__worldview) is not None:
+            return True
+        return False
+
+    def check_worldview(self) -> bool:
+        if self.__worldview not in self.__worldview_invalid and re.match(r"^[\D]+$", self.__worldview) is not None:
             return True
         return False
 
@@ -120,18 +125,20 @@ class Validator:
 
     def check_all(self) -> int:
         if not self.check_email():
-            return 1
+            return 0
         elif not self.check_weight():
-            return 2
-        elif not self.check_age():
-            return 3
+            return 1
         elif not self.check_inn():
-            return 4
+            return 2
         elif not self.check_passport_series():
+            return 3
+        elif not self.check_university():
+            return 4
+        elif not self.check_age():
             return 5
-        elif not self.check_worldview():
-            return 6
         elif not self.check_political_views():
+            return 6
+        elif not self.check_worldview():
             return 7
         elif not self.check_address():
             return 8
@@ -146,7 +153,8 @@ args = parser.parse_args()
 file = ReadFromFile(args.file_input)
 output = open(args.file_output, 'w')
 errors = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-with tqdm(file.data, desc='Прогресс валидации') as progressbar:
+number_of_valid_records = 0
+with tqdm(file.data, desc='Прогресс валидации', colour="#FFFFFF") as progressbar:
     for elem in file.data:
         check = Validator(elem['email'], elem['weight'], elem['inn'], elem['passport_series'], elem['university'],
                           elem['age'], elem['political_views'], elem['worldview'], elem['address'])
@@ -158,7 +166,22 @@ with tqdm(file.data, desc='Прогресс валидации') as progressbar:
                          + "\n" + "political_views: " + elem["political_views"] + "\n" + "worldview: " + elem[
                              "worldview"] +
                          "\n" + "address: " + elem["address"] + "\n" + "__________________________________________\n")
+            number_of_valid_records += 1
         else:
             errors[error] += 1
         progressbar.update(1)
+number_of_invalid_records = errors[0] + errors[1] + errors[2] + errors[3] + errors[4] + errors[5] + errors[6] + errors[
+    7] + errors[8]
+print("Общее число корректных записей:", number_of_valid_records,)
+print("Общее число некорректных записей:", number_of_invalid_records)
+print("Ошибки в email:", errors[0])
+print("Ошибки в weight:", errors[0])
+print("Ошибки в inn:", errors[0])
+print("Ошибки в passport_series:", errors[0])
+print("Ошибки в university:", errors[0])
+print("Ошибки в age:", errors[0])
+print("Ошибки в political_views:", errors[0])
+print("Ошибки в worldview:", errors[0])
+print("Ошибки в address:", errors[0])
+
 output.close()
