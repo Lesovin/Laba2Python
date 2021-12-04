@@ -141,7 +141,7 @@ class Validator:
         :return: bool
         Булевый результат проверки на корректность
         """
-        if re.match(r"\d{2,3}\b", str(self.__age)) is not None and (int(self.__age) > 18) and (
+        if re.match(r"\d{2,3}$", str(self.__age)) is not None and (int(self.__age) > 0) and (
                 int(self.__age) < 122):
             return True
         return False
@@ -182,8 +182,7 @@ class Validator:
         :return: bool
         Булевый результат проверки на корректность
         """
-        if re.match(r"(ул\.\s[\w .-]+\d+)", self.__address) is not None and re.match(r"^Аллея\s[\w .-]+\d+$",
-                                                                                     self.__address) is None:
+        if re.match(r"^(ул\.)?(Аллея)?\s[\w.\s-]+\d+$", self.__address) is not None:
             return True
         return False
 
@@ -218,24 +217,21 @@ file = ReadFromFile(args.file_input)
 output = open(args.file_output, 'w')
 errors = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 number_of_valid_records = 0
+data_to_write = []
 with tqdm(file.data, desc='Прогресс валидации', colour="#FFFFFF") as progressbar:
     for elem in file.data:
         check = Validator(elem['email'], elem['weight'], elem['inn'], elem['passport_series'], elem['university'],
                           elem['age'], elem['political_views'], elem['worldview'], elem['address'])
         error = check.check_all()
         if error == 9:
-            output.write("email: " + elem["email"] + "\n" + "weight:" + str(elem["weight"]) + "\n" +
-                         "inn: " + elem["inn"] + "\n" + "passport_series:" + elem["passport_series"] + "\n" +
-                         "university: " + elem["university"] + "\n" + "age: " + str(elem["age"])
-                         + "\n" + "political_views: " + elem["political_views"] + "\n" + "worldview: " + elem[
-                             "worldview"] +
-                         "\n" + "address: " + elem["address"] + "\n" + "__________________________________________\n")
+            data_to_write.append(elem)
             number_of_valid_records += 1
         else:
             errors[error] += 1
         progressbar.update(1)
 number_of_invalid_records = errors[0] + errors[1] + errors[2] + errors[3] + errors[4] + errors[5] + errors[6] + errors[
     7] + errors[8]
+json.dump(data_to_write, output)
 print("Общее число корректных записей:", number_of_valid_records, )
 print("Общее число некорректных записей:", number_of_invalid_records)
 print("Ошибки в email:", errors[0])
