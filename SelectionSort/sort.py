@@ -16,10 +16,12 @@ def selection_sort(database: list):
                 database[k], database[i] = database[i], database[k]
 
 
-data = read_data("D:/PythonProjects/Laba2/69_output.txt")
-selection_sort(data)
-with open('69_sorted.txt', 'wb') as file:
-    pickle.dump(data, file)
-with open('69_sorted.txt', 'rb') as file:
-    data = pickle.load(file)
-print(data)
+def serialization(database: list, path: str) -> None:
+    with open(path, 'wb') as file:
+        pickle.dump(database, file)
+
+
+def deserialization(path: str) -> list:
+    with open(path, 'rb') as file:
+        database = pickle.load(file)
+    return database
