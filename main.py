@@ -1,15 +1,17 @@
 import json
 import argparse
-from SelectionSort import sort
-from SelectionSort import validator
+from SelectionSort.sort import *
+from SelectionSort.validator import *
 from tqdm import tqdm
 
 parser = argparse.ArgumentParser(description='main')
 parser.add_argument('-input', dest="file_input", default='D:/PythonProjects/Laba2/69.txt', type=str)
 parser.add_argument('-output', dest="file_output", default='D:/PythonProjects/Laba2/69_output.txt', type=str)
+parser.add_argument('-sorted_data', dest="file_sorted", default='D:/PythonProjects/Laba2/69_sorted.txt', type=str)
 args = parser.parse_args()
 file = ReadFromFile(args.file_input)
 output = open(args.file_output, 'w')
+sorted_data_path = args.file_sorted
 errors = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 number_of_valid_records = 0
 data_to_write = []
@@ -23,7 +25,7 @@ with tqdm(file.data, desc='Прогресс валидации', colour="#FFFFFF
             number_of_valid_records += 1
         else:
             errors[error] += 1
-progressbar.update(1)
+        progressbar.update(1)
 number_of_invalid_records = errors[0] + errors[1] + errors[2] + errors[3] + errors[4] + errors[5] + errors[6] + errors[
     7] + errors[8]
 json.dump(data_to_write, output)
@@ -39,3 +41,7 @@ print("Ошибки в political_views:", errors[6])
 print("Ошибки в worldview:", errors[7])
 print("Ошибки в address:", errors[8])
 output.close()
+data_to_sort = read_data(args.file_output)
+selection_sort(data_to_sort)
+serialization(data_to_sort, sorted_data_path)
+deserialization(sorted_data_path)
